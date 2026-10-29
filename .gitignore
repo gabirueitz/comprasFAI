@@ -1,0 +1,19 @@
+# Ambientes virtuais
+venv/
+env/
+.venv/
+
+# Cache do Python
+__pycache__/
+*.pyc
+
+# Saídas do PyInstaller
+build/
+dist/
+*.spec
+
+# Dados de perfil e sessão do navegador
+sessao_edge_playwright/
+
+# Arquivos locais com dados sensíveis
+config.json
