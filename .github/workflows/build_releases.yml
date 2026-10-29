@@ -1,0 +1,49 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-linux:
+    name: Compilar para Linux
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Obter o código-fonte
+        uses: actions/checkout@v4
+
+      - name: Configurar o Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instalar dependências do sistema
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-tk
+
+      - name: Instalar dependências Python
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Compilar com PyInstaller
+        run: |
+          pyinstaller --noconfirm --onedir --windowed --name "ComprasFAI" app_compras_fai.py
+
+      - name: Compactar o executável Linux
+        run: |
+          tar -czvf ComprasFAI_Linux.tar.gz -C dist ComprasFAI
+
+      - name: Publicar nas Releases do GitHub
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ComprasFAI_Linux.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
